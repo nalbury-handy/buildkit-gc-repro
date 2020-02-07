@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  labels:
+    app: registry
+  name: registry
+spec:
+  serviceName: registry
+  podManagementPolicy: Parallel
+  replicas: 1
+  selector:
+    matchLabels:
+      app: registry
+  template:
+    metadata:
+      labels:
+        app: registry
+    spec:
+      containers:
+      - name: registry
+        image: registry:2
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: registry
+spec:
+  clusterIP: None
+  ports:
+  - port: 5000
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: registry
+  sessionAffinity: None
+  type: ClusterIP
